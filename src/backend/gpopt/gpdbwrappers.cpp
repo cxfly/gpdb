@@ -3026,4 +3026,22 @@ gpdb::FMDCacheNeedsReset
 	return true;
 }
 
+PrintableFilterCol*
+gpdb::PMakePrintableFilter
+	(
+		char *str,
+		Oid oid
+	)
+{
+	GP_WRAP_START;
+	{
+	PrintableFilterCol *partSelectKey = makeNode(PrintableFilterCol);
+	partSelectKey->columnname = str;
+	partSelectKey->type = oid;
+	return partSelectKey;
+
+	}
+	GP_WRAP_END;
+	return NULL;
+}
 // EOF

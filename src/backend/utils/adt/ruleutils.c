@@ -112,7 +112,6 @@ typedef struct
 	Plan	   *inner_plan;		/* INNER subplan, or NULL if none */
 } deparse_namespace;
 
-
 /* ----------
  * Global data
  * ----------
@@ -3760,6 +3759,7 @@ isSimpleNode(Node *node, Node *parentNode, int prettyFlags)
 		case T_CoerceToDomainValue:
 		case T_SetToDefault:
 		case T_CurrentOfExpr:
+		case T_PrintableFilterCol:
 			/* single words: always simple */
 			return true;
 
@@ -4928,6 +4928,12 @@ get_rule_expr(Node *node, deparse_context *context,
 					get_rule_expr((Node *) lfirst(l), context, showimplicit);
 					sep = ", ";
 				}
+			}
+			break;
+
+		case T_PrintableFilterCol:
+			{
+				appendStringInfoString(buf, ((PrintableFilterCol *) node)->columnname);
 			}
 			break;
 
@@ -6588,7 +6594,7 @@ generate_operator_name(Oid operid, Oid arg1, Oid arg2)
 	HeapTuple	opertup;
 	Form_pg_operator operform;
 	char	   *oprname;
-	char	   *nspname;
+	char	   *nspname = NULL;
 	Operator	p_result;
 
 	initStringInfo(&buf);
